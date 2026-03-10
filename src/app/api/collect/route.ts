@@ -10,6 +10,7 @@ interface CollectedTweet {
   replyCount: number;
   impressionCount: number;
   createdAt: string;
+  tweetUrl: string;
 }
 
 interface XAIResponseItem {
@@ -54,6 +55,7 @@ function parseTweetsFromResponse(content: string): CollectedTweet[] {
         replyCount: Number(t.replyCount || t.reply_count || t.replies || 0),
         impressionCount: Number(t.impressionCount || t.impression_count || t.impressions || 0),
         createdAt: String(t.createdAt || t.created_at || new Date().toISOString()),
+        tweetUrl: String(t.tweetUrl || t.tweet_url || t.url || ''),
       }));
     }
   } catch {
@@ -96,14 +98,16 @@ export async function POST(request: Request) {
         input: [
           {
             role: 'user',
-            content: `X（Twitter）で「${genre}」に関連する、直近7日間でエンゲージメント（いいね・RT）が特に高かった日本語ツイートを${count}件見つけてください。
+            content: `X（Twitter）で「${genre}」に関連する、直近7日間で最もバズった日本語ツイートを${count}件見つけてください。
 
 条件:
 - 投稿日が直近7日以内のツイートのみ（それ以前のツイートは絶対に含めない）
-- いいね数、RT数が多いもの優先
-- 個人アカウントのツイートを重視（企業の宣伝は除外）
+- いいね数500以上、またはRT数100以上のバズツイートを優先
+- いいね数が多い順にソート
+- 個人アカウントのツイートを重視（企業の公式宣伝は除外）
 - ツイート本文は省略せず全文を含める
-- createdAtは必ず正確な投稿日時を「YYYY-MM-DD」形式で含めること
+- createdAtは必ず正確な投稿日を「YYYY-MM-DD」形式で含めること
+- tweetUrlは必ずそのツイートの実際のURL（https://x.com/ユーザー名/status/ツイートID）を含めること
 
 必ず以下のJSON配列形式のみで返してください（説明文は不要）:
 [
@@ -116,7 +120,8 @@ export async function POST(request: Request) {
     "retweetCount": RT数,
     "replyCount": リプライ数,
     "impressionCount": インプレッション数,
-    "createdAt": "YYYY-MM-DD形式の投稿日"
+    "createdAt": "YYYY-MM-DD形式の投稿日",
+    "tweetUrl": "https://x.com/ユーザー名/status/ツイートID"
   }
 ]`,
           },

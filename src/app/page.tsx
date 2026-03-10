@@ -12,6 +12,7 @@ interface CollectedTweet {
   replyCount: number;
   impressionCount: number;
   createdAt: string;
+  tweetUrl: string;
 }
 
 interface GeneratedTweet {
@@ -230,29 +231,42 @@ export default function Home() {
               📊 収集結果（{collectedTweets.length}件）
             </h2>
             <div className="space-y-3 max-h-96 overflow-y-auto">
-              {collectedTweets.map((tweet, i) => (
-                <div key={i} className="bg-gray-800 rounded-lg p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium text-gray-300">
-                        {tweet.authorName}
-                      </span>
-                      {tweet.authorUsername && (
-                        <span className="text-sm text-gray-500">@{tweet.authorUsername}</span>
-                      )}
+              {collectedTweets.map((tweet, i) => {
+                const url = tweet.tweetUrl || (tweet.authorUsername && tweet.id ? `https://x.com/${tweet.authorUsername}/status/${tweet.id}` : '');
+                const Card = url ? 'a' : 'div';
+                return (
+                  <Card
+                    key={i}
+                    {...(url ? { href: url, target: '_blank', rel: 'noopener noreferrer' } : {})}
+                    className={`bg-gray-800 rounded-lg p-4 block ${url ? 'hover:bg-gray-750 hover:ring-1 hover:ring-gray-600 transition-all cursor-pointer' : ''}`}
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-medium text-gray-300">
+                          {tweet.authorName}
+                        </span>
+                        {tweet.authorUsername && (
+                          <span className="text-sm text-gray-500">@{tweet.authorUsername}</span>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {tweet.createdAt && (
+                          <span className="text-xs text-gray-500">{formatDate(tweet.createdAt)}</span>
+                        )}
+                        {url && (
+                          <span className="text-xs text-gray-600">↗</span>
+                        )}
+                      </div>
                     </div>
-                    {tweet.createdAt && (
-                      <span className="text-xs text-gray-500">{formatDate(tweet.createdAt)}</span>
-                    )}
-                  </div>
-                  <p className="text-gray-200 text-sm whitespace-pre-wrap mb-2">{tweet.text}</p>
-                  <div className="flex gap-4 text-xs text-gray-500">
-                    <span>❤️ {tweet.likeCount.toLocaleString()}</span>
-                    <span>🔁 {tweet.retweetCount.toLocaleString()}</span>
-                    <span>💬 {tweet.replyCount.toLocaleString()}</span>
-                  </div>
-                </div>
-              ))}
+                    <p className="text-gray-200 text-sm whitespace-pre-wrap mb-2">{tweet.text}</p>
+                    <div className="flex gap-4 text-xs text-gray-500">
+                      <span>❤️ {tweet.likeCount.toLocaleString()}</span>
+                      <span>🔁 {tweet.retweetCount.toLocaleString()}</span>
+                      <span>💬 {tweet.replyCount.toLocaleString()}</span>
+                    </div>
+                  </Card>
+                );
+              })}
             </div>
           </div>
 
