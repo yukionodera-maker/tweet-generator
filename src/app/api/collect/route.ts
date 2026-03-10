@@ -99,9 +99,11 @@ export async function POST(request: Request) {
             content: `X（Twitter）で「${genre}」に関連する、直近7日間でエンゲージメント（いいね・RT）が特に高かった日本語ツイートを${count}件見つけてください。
 
 条件:
+- 投稿日が直近7日以内のツイートのみ（それ以前のツイートは絶対に含めない）
 - いいね数、RT数が多いもの優先
 - 個人アカウントのツイートを重視（企業の宣伝は除外）
 - ツイート本文は省略せず全文を含める
+- createdAtは必ず正確な投稿日時を「YYYY-MM-DD」形式で含めること
 
 必ず以下のJSON配列形式のみで返してください（説明文は不要）:
 [
@@ -114,7 +116,7 @@ export async function POST(request: Request) {
     "retweetCount": RT数,
     "replyCount": リプライ数,
     "impressionCount": インプレッション数,
-    "createdAt": "投稿日時"
+    "createdAt": "YYYY-MM-DD形式の投稿日"
   }
 ]`,
           },

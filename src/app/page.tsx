@@ -11,6 +11,7 @@ interface CollectedTweet {
   retweetCount: number;
   replyCount: number;
   impressionCount: number;
+  createdAt: string;
 }
 
 interface GeneratedTweet {
@@ -20,6 +21,20 @@ interface GeneratedTweet {
 }
 
 type Step = 'input' | 'collecting' | 'collected' | 'generating' | 'result';
+
+function formatDate(dateStr: string): string {
+  try {
+    const date = new Date(dateStr);
+    if (isNaN(date.getTime())) return dateStr;
+    const m = date.getMonth() + 1;
+    const d = date.getDate();
+    const days = ['日', '月', '火', '水', '木', '金', '土'];
+    const dow = days[date.getDay()];
+    return `${m}/${d}（${dow}）`;
+  } catch {
+    return dateStr;
+  }
+}
 
 export default function Home() {
   const [step, setStep] = useState<Step>('input');
@@ -211,12 +226,17 @@ export default function Home() {
             <div className="space-y-3 max-h-96 overflow-y-auto">
               {collectedTweets.map((tweet, i) => (
                 <div key={i} className="bg-gray-800 rounded-lg p-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="text-sm font-medium text-gray-300">
-                      {tweet.authorName}
-                    </span>
-                    {tweet.authorUsername && (
-                      <span className="text-sm text-gray-500">@{tweet.authorUsername}</span>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-medium text-gray-300">
+                        {tweet.authorName}
+                      </span>
+                      {tweet.authorUsername && (
+                        <span className="text-sm text-gray-500">@{tweet.authorUsername}</span>
+                      )}
+                    </div>
+                    {tweet.createdAt && (
+                      <span className="text-xs text-gray-500">{formatDate(tweet.createdAt)}</span>
                     )}
                   </div>
                   <p className="text-gray-200 text-sm whitespace-pre-wrap mb-2">{tweet.text}</p>
