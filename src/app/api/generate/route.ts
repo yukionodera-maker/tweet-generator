@@ -35,13 +35,14 @@ export async function POST(request: Request) {
 - アカウント名: ${accountInfo.accountName}
 - ジャンル: ${accountInfo.genre}
 - ペルソナ: ${accountInfo.persona}
-- トンマナ: ${accountInfo.tone}
+${accountInfo.tone ? `- 文体・トーン: ${accountInfo.tone}` : ''}
 
 ## 参考ツイート（最近エンゲージメントが高かったもの）
 ${tweetSummary}
 
 ## タスク
-上記の参考ツイートのパターン・構造を分析し、アカウント情報のペルソナ・トンマナに合わせたツイート文案を${accountInfo.postCount}本生成してください。
+上記の参考ツイートのパターン・構造を分析し、アカウント情報のペルソナに合わせたツイート文案を${accountInfo.postCount}本生成してください。
+${accountInfo.tone?.startsWith('@') ? `\n「${accountInfo.tone}」のアカウントの過去ツイートの文体・口調・テンションを真似てください。` : accountInfo.tone ? `\n文体・トーンは「${accountInfo.tone}」を意識してください。` : ''}
 
 ## 制約
 - 各ツイートは140文字以内

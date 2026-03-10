@@ -75,8 +75,8 @@ export default function Home() {
   };
 
   const handleGenerate = async () => {
-    if (!accountName || !persona || !tone) {
-      setError('アカウント情報を全て入力してください');
+    if (!accountName || !persona) {
+      setError('アカウント名とペルソナを入力してください');
       return;
     }
     setError('');
@@ -175,7 +175,10 @@ export default function Home() {
             </div>
 
             <div>
-              <label className="block text-sm text-gray-400 mb-1">トンマナ</label>
+              <label className="block text-sm text-gray-400 mb-1">
+                文体・トーン
+                <span className="text-gray-600 ml-1">（任意）</span>
+              </label>
               <input
                 type="text"
                 value={tone}
@@ -183,6 +186,9 @@ export default function Home() {
                 placeholder="例: カジュアル・共感重視、論理的・データ重視"
                 className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-gray-100 placeholder-gray-500 focus:outline-none focus:border-blue-500"
               />
+              <p className="text-xs text-gray-500 mt-1">
+                既存アカウントの場合は @ユーザー名 を入力すると、そのアカウントの文体を参考にします
+              </p>
             </div>
 
             <div>
